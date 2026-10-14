@@ -705,8 +705,18 @@ document.querySelectorAll('.prereg-block, .rw-prereg').forEach(function(f){
   function goNext() { if (moving) return; moving = true; pos += 1; move(true); }
   function goPrev() { if (moving) return; moving = true; pos -= 1; move(true); }
 
-  document.getElementById('sysPrev').addEventListener('click', goPrev);
-  document.getElementById('sysNext').addEventListener('click', goNext);
+  /* 自动轮播：每 3 秒切下一张；鼠标悬浮到画报上暂停，移开恢复 */
+  var artBox = document.getElementById('systemArt');
+  var timer = null;
+  function start() { if (timer) return; timer = setInterval(goNext, 3000); }
+  function stop() { if (timer) { clearInterval(timer); timer = null; } }
+  function restart() { stop(); start(); }
+
+  artBox.addEventListener('mouseenter', stop);
+  artBox.addEventListener('mouseleave', start);
+
+  document.getElementById('sysPrev').addEventListener('click', function(){ goPrev(); restart(); });
+  document.getElementById('sysNext').addEventListener('click', function(){ goNext(); restart(); });
   dotsBox.addEventListener('click', function(e) {
     var d = e.target.closest('.dot[data-idx]');
     if (!d || moving) return;
@@ -715,10 +725,12 @@ document.querySelectorAll('.prereg-block, .rw-prereg').forEach(function(f){
     moving = true;
     pos = i + 1;
     move(true);
+    restart();
   });
 
   move(false);
   renderDots();
+  start();
 })();
 </script>
 </body>
