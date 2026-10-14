@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cat-Eared Girl · DMM 预注册官网（原型）</title>
+<!-- DMM 追踪标签（每页必嵌，head 上部） -->
+<script src="https://libs.games.dmm.com/js/dmg_i3_tracking_tag.js"></script>
+<link rel="stylesheet" href="general/dmmheader.css">
+<link rel="stylesheet" href="base.css">
+<link rel="stylesheet" href="preview-nav.css">
+<style>
+/* ═══ 单页滚动布局：表头+导航固定，区块按内容自然高度，整页滚动 ═══ */
+.page-single { }                              /* 滚动容器：普通文档流 */
+.block { scroll-margin-top: 94px; position: relative; }
+.block-home { min-height: 100vh; scroll-margin-top: 0; }  /* 首屏全屏，且锚点回顶 */
+/* 区块内容：1200 居中，不铺满视口 */
+.block > .inner { width: 100%; max-width: 1200px; margin: 0 auto; }
+/* 单页的页脚随文档流排布在页面最底部（覆盖 base.css 的固定定位） */
+.site-footer { position: static; }
+/* 导航 5 项无二级：只悬浮/选中两个态 */
+.site-nav .sub-panel { display: none; }
+.nav-item.has-sub::after { display: none; }
+
+/* ═══ 首页 · 首屏 KV ═══ */
+.block-home { display: flex; flex-direction: column; overflow: hidden; }
+.hero { position: relative; flex: 1; min-height: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 20px; padding: 40px; }
+.hero .kv-bg-slot .bg-label { font-size: 24px; }
+.hero .hero-inner { position: relative; z-index: 2; display: flex; flex-direction: column; align-items: center; gap: 20px; }
+.hero .kv-logo-slot { width: 300px; height: 80px; }
+.hero-cards { position: relative; z-index: 2; display: flex; gap: 16px; flex-wrap: wrap; justify-content: center; margin-top: 10px; }
+.hero-card { width: 210px; height: 140px; background: rgba(255,255,255,.85); border: 1px solid #c8cdd6; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 600; color: #1a1a1a; text-decoration: none; cursor: pointer; }
+.hero-card:hover { background: #fff; border-color: #1a1a1a; }
+
+/* ═══ 预注册奖励 ═══ */
+.block-rewards > .inner { padding: 60px 20px; }
+.reward-content { display:flex; gap:40px; margin-top:8px; align-items:stretch; justify-content:center; }
+.reward-char { width:460px; height:600px; flex:none; background:repeating-linear-gradient(45deg,#e8eaee,#e8eaee 12px,#f4f5f7 12px,#f4f5f7 24px); border:1px dashed #b9bfca; border-radius:8px; display:flex; align-items:center; justify-content:center; color:#8a92a0; font-size:15px; }
+.reward-char .char-placeholder { text-align:center; line-height:1.8; }
+.reward-right { flex:1; min-width:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:28px; margin-left:40px; }
+.reward-grid { display:grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap:28px; width:100%; max-width:820px; justify-content:center; }
+.reward-item { display:flex; align-items:center; gap:16px; background:#fff; padding:20px 18px; border-radius:12px; box-shadow:0 4px 12px rgba(0,0,0,.08); min-height:108px; }
+.reward-item .ri-icon { width:100px; height:100px; background:#f0f0f0; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:13px; color:#999; flex-shrink:0; }
+.reward-item .ri-info { flex:1; }
+.reward-item .ri-name { font-size:16px; font-weight:600; color:#222; }
+.reward-item .ri-desc { font-size:13px; color:#666; margin-top:6px; }
+.reward-deliver-text { font-size:15px; color:#555; font-weight:500; }
+
+/* ═══ 角色介绍 ═══ */
+.block-char > .inner { padding: 60px 20px; }
+.char-content { display:flex; gap:30px; align-items:flex-start; width:100%; max-width:1200px; margin:0 auto; }
+.char-left { width:300px; flex:none; display:flex; flex-direction:column; }
+.char-left .char-name { font-size:36px; font-weight:700; margin-bottom:18px; min-height:48px; }
+.char-left .char-desc { font-size:15px; color:#555; line-height:2; min-height:120px; background:#fff; border:1px solid #c8cdd6; border-radius:8px; padding:16px 18px; }
+/* 左侧下方：角色头像排布（一排 6 个） */
+.char-avatars { display:flex; gap:12px; margin-top:24px; justify-content:space-between; }
+.char-avatars .slot { width:82px; height:82px; flex:none; cursor:pointer; transition:all .25s ease; }
+.char-avatars .slot.cur { border:2px solid #c00a2f; transform:scale(1.12); box-shadow:0 4px 16px rgba(0,0,0,.18); }
+/* 右侧：大立绘主视觉 + 下方小Q */
+.char-stage { flex:1; min-width:0; display:flex; flex-direction:column; align-items:center; }
+.char-art { width:560px; height:640px; flex:none; transition:transform .35s ease, opacity .35s ease; }
+.char-art.slide-out-left { transform: translateX(-60px); opacity: 0; }
+.char-art.slide-out-right { transform: translateX(60px); opacity: 0; }
+.char-chibi { margin-top:24px; width:96px; height:96px; transition:transform .35s ease, opacity .35s ease; }
+.char-chibi .slot { width:100%; height:100%; }
+/* 切换箭头（左右） */
+.char-carousel { display:flex; align-items:center; gap:14px; margin-top:20px; justify-content:center; }
+.arr-btn { width:44px; height:44px; border-radius:50%; flex:none; background:#fff; border:1px solid #c8cdd6; color:#1a1a1a; font-size:20px; cursor:pointer; line-height:1; }
+.arr-btn:hover { background:#1a1a1a; color:#fff; border-color:#1a1a1a; }
+.arr-btn:disabled { opacity:.3; cursor:default; }
+.arr-btn:disabled:hover { background:#fff; color:#1a1a1a; border-color:#c8cdd6; }
+
+/* ═══ System · 居中大画报 + 两侧箭头 + 下方分页点 ═══ */
+.block-system { min-height: 100vh; display:flex; flex-direction:column; }
+.block-system > .inner { flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center; padding:60px 20px; }
+.system-caption { text-align:center; margin-bottom:28px; }
+.system-caption .st-arc { font-size:16px; color:#777; margin-bottom:6px; letter-spacing:.2em; }
+.system-caption h2 { font-size:28px; font-weight:700; }
+.system-stage { display:flex; align-items:center; gap:24px; }
+.system-art { width:720px; height:480px; flex:none; transition:transform .3s ease, opacity .3s ease; }
+.system-art.slide-out-left { transform:translateX(-40px); opacity:0; }
+.system-art.slide-out-right { transform:translateX(40px); opacity:0; }
+.system-dots { display:flex; gap:12px; margin-top:24px; }
+.system-dots .dot { width:12px; height:12px; border-radius:50%; background:#c8cdd6; cursor:pointer; border:none; transition:background .2s; }
+.system-dots .dot.cur { background:#c00a2f; }
+
+/* ═══ 运行环境 ═══ */
+.block-spec { min-height: 100vh; display:flex; flex-direction:column; }
+.block-spec > .inner { flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center; padding:60px 20px; }
+.spec-wrap { display:flex; justify-content:center; margin-top:24px; }
+.spec-block { width:100%; max-width:800px; }
+.spec-list { list-style:none; }
+.spec-list li { display:flex; justify-content:center; align-items:center; gap:16px; padding:10px 0; font-size:15px; line-height:1.6; }
+.spec-list .k { flex:none; color:#555; font-weight:600; }
+.spec-list .v { color:#1a1a1a; }
+</style>
+</head>
+<body>
+
+<!-- ═══ DEMO 预览导航器（全站入口） ═══ -->
+<aside class="demo-side" id="demoSide">
+  <nav class="side-body">
+    <div class="side-title">DEMO 预览导航</div>
+    <div class="side-group-title">官网单页区块</div>
+    <a class="side-link" href="#home">首页</a>
+    <a class="side-link" href="#rewards">预注册奖励</a>
+    <a class="side-link" href="#char">角色介绍</a>
+    <a class="side-link" href="#system">System</a>
+    <a class="side-link" href="#spec">运行环境</a>
+    <div class="side-group-title">独立落地页</div>
+    <a class="side-link" href="thanks.html">感谢页</a>
+    <a class="side-link" href="registered.html">完毕页</a>
+    <a class="side-link" href="legal-sell.html">特定商业交易法</a>
+    <a class="side-link" href="legal-fund.html">资金结算法</a>
+    <a class="side-link" href="error.html">错误页</a>
+    <a class="side-link" href="contact.html">联系我们</a>
+  </nav>
+  <button class="side-toggle" id="sideToggle" title="展开/收起预览目录">收起</button>
+</aside>
+
+<!-- DMM 标头（模拟占位） -->
+<header class="dmm-header">
+  <div class="dmm-logo">DMM GAMES 标头（模拟占位）</div>
+</header>
+
+<!-- 站点导航：5 项，无二级，仅悬浮态 + 选中态 -->
+<nav class="site-nav">
+  <div class="nav-row">
+    <div class="nav-logo"><div class="slot" style="width:auto;min-width:90px;padding:6px 12px;border-radius:6px;white-space:nowrap;"><span class="slot-name" style="font-size:14px;white-space:nowrap;">Cat-Eared Girl</span></div></div>
+    <a class="nav-item active" href="#home">首页</a>
+    <a class="nav-item" href="#rewards">预注册奖励</a>
+    <a class="nav-item" href="#char">角色介绍</a>
+    <a class="nav-item" href="#system">System</a>
+    <a class="nav-item" href="#spec">运行环境</a>
+  </div>
+</nav>
+
+<!-- 单页滚动内容（5 区块） -->
+<div class="page-single">
+
+  <!-- 首页：首屏 KV -->
+  <section class="block block-home" id="home">
+    <div class="section-bg kv-bg-slot">
+      <span class="bg-label">首屏主视觉视频（满铺整屏背景）</span>
+    </div>
+    <div class="hero">
+      <div class="hero-inner">
+        <div class="slot kv-logo-slot">
+          <div class="slot-name">Cat-Eared Girl · logo</div>
+        </div>
+        <!-- 预注册表单 -->
+        <form class="prereg-block" action="https://player-registration.games.dmm.com/entry" method="post" id="pre_registration_form">
+          <input type="hidden" name="app_id" value="demo_app_id">
+          <input type="hidden" name="finish_url" value="https://dmg.example.com/thanks.html">
+          <input type="hidden" name="registered_url" value="https://dmg.example.com/registered.html">
+          <input type="hidden" name="param_hash" value="demo_hash">
+          <button type="submit" class="btn-prereg">事前注册</button>
+          <label class="notice-check">
+            <input type="checkbox" name="notice" id="notice" value="1" checked>
+            <span>接收通知邮件</span>
+          </label>
+        </form>
+      </div><!-- /hero-inner -->
+      <!-- 首页入口卡片（锚点定位） -->
+      <div class="hero-cards">
+        <a class="hero-card" href="#rewards">预注册奖励</a>
+        <a class="hero-card" href="#char">角色介绍</a>
+        <a class="hero-card" href="#system">System</a>
+        <a class="hero-card" href="#spec">运行环境</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 预注册奖励 -->
+  <section class="block block-rewards" id="rewards">
+    <div class="inner">
+      <h2 class="section-title">预注册奖励</h2>
+      <div class="reward-content">
+        <div class="reward-char"><div class="char-placeholder">角色立绘占位</div></div>
+        <div class="reward-right">
+          <div class="reward-grid">
+            <div class="reward-item">
+              <div class="ri-icon">图标占位</div>
+              <div class="ri-info"><div class="ri-name">奖励名</div><div class="ri-desc">奖励说明</div></div>
+            </div>
+            <div class="reward-item">
+              <div class="ri-icon">图标占位</div>
+              <div class="ri-info"><div class="ri-name">奖励名</div><div class="ri-desc">奖励说明</div></div>
+            </div>
+            <div class="reward-item">
+              <div class="ri-icon">图标占位</div>
+              <div class="ri-info"><div class="ri-name">奖励名</div><div class="ri-desc">奖励说明</div></div>
+            </div>
+            <div class="reward-item">
+              <div class="ri-icon">图标占位</div>
+              <div class="ri-info"><div class="ri-name">奖励名</div><div class="ri-desc">奖励说明</div></div>
+            </div>
+          </div>
+          <div class="reward-deliver"><span class="reward-deliver-text">进入游戏后通过邮箱领取</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 角色介绍：左名字+性格+下方头像，右大立绘+小Q -->
+  <section class="block block-char" id="char">
+    <div class="inner">
+      <h2 class="section-title">角色介绍</h2>
+      <div class="char-content">
+        <div class="char-left">
+          <div class="char-name" id="charName">天照</div>
+          <div class="char-desc" id="charDesc">【性格介绍文案位】</div>
+          <div class="char-avatars" id="charAvatars"><!-- JS 填充 6 个头像 --></div>
+        </div>
+        <div class="char-stage">
+          <div class="char-art" id="charArt"><div class="slot" style="width:100%;height:100%;"><div class="slot-name" id="charArtName">天照 立绘</div><div class="slot-src">大立绘·主视觉</div></div></div>
+          <div class="char-chibi" id="charChibi"><div class="slot"><div class="slot-name" id="charChibiName">天照 小Q</div></div></div>
+          <div class="char-carousel">
+            <button class="arr-btn" id="prevBtn" aria-label="上一个角色">‹</button>
+            <button class="arr-btn" id="nextBtn" aria-label="下一个角色">›</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- System：居中大画报 + 两侧箭头 + 下方分页点 -->
+  <section class="block block-system" id="system">
+    <div class="inner">
+      <div class="system-caption">
+        <div class="st-arc">SYSTEM</div>
+        <h2>系统 / 玩法展示</h2>
+      </div>
+      <div class="system-stage">
+        <button class="arr-btn" id="sysPrev" aria-label="上一张">‹</button>
+        <div class="system-art" id="systemArt"><div class="slot" style="width:100%;height:100%;"><div class="slot-name" id="systemArtName">System 展示图 1（单独交付大画报）</div></div></div>
+        <button class="arr-btn" id="sysNext" aria-label="下一张">›</button>
+      </div>
+      <div class="system-dots" id="systemDots"><!-- JS 填充分页点 --></div>
+    </div>
+  </section>
+
+  <!-- 运行环境 -->
+  <section class="block block-spec" id="spec">
+    <div class="inner">
+      <h2 class="section-title">运行环境</h2>
+      <div class="spec-wrap">
+        <div class="spec-block">
+          <ul class="spec-list">
+            <li><span class="k">操作系统（OS）</span><span class="v">【xxx 文案位】</span></li>
+            <li><span class="k">CPU</span><span class="v">【xxx 以上】</span></li>
+            <li><span class="k">内存</span><span class="v">【xxx 以上】</span></li>
+            <li><span class="k">显卡</span><span class="v">【xxxx 以上】</span></li>
+            <li><span class="k">其他配置要求</span><span class="v">【xxxxx 以上】</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div><!-- /page-single -->
+
+<!-- 右下角悬浮预注册 -->
+<form class="float-prereg" id="floatPrereg" action="https://player-registration.games.dmm.com/entry" method="post">
+  <input type="hidden" name="app_id" value="demo_app_id">
+  <input type="hidden" name="finish_url" value="https://dmg.example.com/thanks.html">
+  <input type="hidden" name="registered_url" value="https://dmg.example.com/registered.html">
+  <input type="hidden" name="param_hash" value="demo_hash">
+  <button type="submit" class="btn-prereg-circle" aria-label="事前注册">事前注册</button>
+  <label class="float-notice notice-check"><input type="checkbox" name="notice" value="1" checked><span>接收通知邮件</span></label>
+</form>
+
+<footer class="site-footer">
+  <div class="footer-links">
+    <a href="#" target="_blank">游戏使用条款 &amp; 隐私政策</a>
+    <a href="legal-sell.html" target="_blank">特定商业交易法</a>
+    <a href="legal-fund.html" target="_blank">资金结算法</a>
+    <a href="contact.html" target="_blank">联系我们</a>
+  </div>
+  <div class="footer-copy">公司名称 + 版权声明</div>
+</footer>
+
+<script src="preview-nav.js"></script>
+<script>
+/* 提交跳转（demo 模拟） */
+document.querySelectorAll('.prereg-block, .float-prereg').forEach(function(f){
+  f.addEventListener('submit', function(e){ e.preventDefault(); window.location.href='thanks.html'; });
+});
+
+/* ═══ 角色介绍 · 六名角色切换 ═══ */
+(function() {
+  var CHARS = [
+    { name: '天照',          art: '天照 立绘',     desc: '【天照 · 性格介绍文案位】' },
+    { name: '源義経',        art: '源義経 立绘',   desc: '【源義経 · 性格介绍文案位】' },
+    { name: '阿波罗',        art: '阿波罗 立绘',   desc: '【阿波罗 · 性格介绍文案位】' },
+    { name: '梅林',          art: '梅林 立绘',     desc: '【梅林 · 性格介绍文案位】' },
+    { name: '佐佐木小次郎',    art: '佐佐木小次郎 立绘', desc: '【佐佐木小次郎 · 性格介绍文案位】' },
+    { name: '天女',          art: '天女 立绘',     desc: '【天女 · 性格介绍文案位】' }
+  ];
+  var curIdx = 0;
+
+  function renderAvatars() {
+    var box = document.getElementById('charAvatars');
+    var html = '';
+    for (var i = 0; i < CHARS.length; i++) {
+      var cls = (i === curIdx) ? 'cur' : '';
+      html += '<div class="slot ' + cls + '" data-idx="' + i + '"><div class="slot-name">' + CHARS[i].name + '</div></div>';
+    }
+    box.innerHTML = html;
+  }
+  function applyChar(idx) {
+    curIdx = idx;
+    document.getElementById('charName').textContent = CHARS[idx].name;
+    document.getElementById('charDesc').textContent = CHARS[idx].desc;
+    document.getElementById('charArtName').textContent = CHARS[idx].art;
+    document.getElementById('charChibiName').textContent = CHARS[idx].name + ' 小Q';
+    renderAvatars();
+  }
+  function switchChar(idx) {
+    if (idx < 0 || idx >= CHARS.length || idx === curIdx) return;
+    var art = document.getElementById('charArt');
+    var chibi = document.getElementById('charChibi');
+    art.classList.add('slide-out-right');
+    chibi.classList.add('slide-out-right');
+    setTimeout(function(){ applyChar(idx); }, 200);
+  }
+
+  document.getElementById('prevBtn').addEventListener('click', function(){ switchChar(curIdx - 1); });
+  document.getElementById('nextBtn').addEventListener('click', function(){ switchChar(curIdx + 1); });
+  document.getElementById('charAvatars').addEventListener('click', function(e){
+    var s = e.target.closest('.slot[data-idx]');
+    if (s) { switchChar(parseInt(s.getAttribute('data-idx'), 10)); }
+  });
+
+  applyChar(0);
+})();
+
+/* ═══ System · 大画报切换 + 分页点 ═══ */
+(function() {
+  var COUNT = 3;              /* 展示图数量占位，可按实际交付图数调整 */
+  var curIdx = 0;
+  function renderDots() {
+    var box = document.getElementById('systemDots');
+    var html = '';
+    for (var i = 0; i < COUNT; i++) {
+      html += '<button class="dot' + (i === curIdx ? ' cur' : '') + '" data-idx="' + i + '" aria-label="展示图 ' + (i + 1) + '"></button>';
+    }
+    box.innerHTML = html;
+  }
+  function apply(idx) {
+    curIdx = idx;
+    document.getElementById('systemArtName').textContent = 'System 展示图 ' + (idx + 1) + '（单独交付大画报）';
+    renderDots();
+  }
+  function switchArt(idx) {
+    if (idx < 0 || idx >= COUNT || idx === curIdx) return;
+    var art = document.getElementById('systemArt');
+    art.classList.add('slide-out-right');
+    setTimeout(function(){ apply(idx); }, 200);
+  }
+  document.getElementById('sysPrev').addEventListener('click', function(){ switchArt(curIdx - 1); });
+  document.getElementById('sysNext').addEventListener('click', function(){ switchArt(curIdx + 1); });
+  document.getElementById('systemDots').addEventListener('click', function(e){
+    var d = e.target.closest('.dot[data-idx]');
+    if (d) { switchArt(parseInt(d.getAttribute('data-idx'), 10)); }
+  });
+  apply(0);
+})();
+</script>
+</body>
+</html>
