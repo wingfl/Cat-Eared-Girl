@@ -67,24 +67,16 @@ html { scroll-snap-type: y mandatory; scroll-behavior: smooth; scroll-padding-to
 .hr-card { width: 76px; background: #fff; border: 1px solid #c8cdd6; border-radius: 8px; padding: 5px; display: flex; flex-direction: column; gap: 5px; }
 .hr-card .hrc-art { width: 100%; height: auto; aspect-ratio: 1 / 1; padding: 3px; }
 .hr-card .hrc-name { text-align: center; font-size: 12px; font-weight: 600; }
-/* 下组：五张等宽里程碑卡横排，末张高亮 */
-.hr-milestones { display: flex; gap: 10px; margin-top: 10px; }
-/* 单张里程碑卡：左图标 / 右人数与奖励内容 */
-.hr-ms { flex: 1 1 0; min-width: 0; background: #fff; border: 1px solid #c8cdd6; border-radius: 10px; padding: 10px 12px; display: flex; align-items: center; gap: 10px; }
-.hr-ms.last { background: #fdf3d8; border-color: #e6cf8a; }
-.hr-ms .ms-icon { width: 48px; height: 48px; flex: none; padding: 0; }
-.hr-ms .ms-icon .slot-name { font-size: 12px; }
-.hr-ms .ms-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
-.hr-ms .ms-num { font-size: 14px; font-weight: 700; color: #1a3a6b; }
-.hr-ms .ms-reward { font-size: 12px; color: #444; line-height: 1.5; }
+/* 下组：整合为一个区块，左侧五个图标横排 / 右侧整段奖励文案 */
+.hr-ms-box { display: flex; align-items: center; gap: 28px; margin-top: 10px; background: #fff; border: 1px solid #c8cdd6; border-radius: 10px; padding: 14px 20px; }
+.hr-ms-icons { flex: none; display: flex; gap: 14px; }
+.hr-ms-icons .ms-icon { width: 52px; height: 52px; flex: none; padding: 0; }
+.hr-ms-icons .ms-icon .slot-name { font-size: 12px; }
+.hr-ms-text { flex: 1; min-width: 0; font-size: 14px; line-height: 1.7; color: #333; }
 
 /* ═══ 预注册奖励：左三选一赠送角色 / 右五档阶段奖励 + 预约按钮 ═══ */
 /* 本页铺满宽度，保证右侧奖励区占屏幕一半以上 */
 .block-rewards > .inner { max-width:none; height:100%; display:flex; flex-direction:column; padding:24px 40px; }
-.rw-head { flex:none; display:flex; align-items:baseline; justify-content:space-between; gap:20px; }
-.rw-head .section-title { margin-bottom:0; }
-.rw-count { font-size:16px; color:#555; }
-.rw-count .rw-count-num { font-size:18px; font-weight:700; color:#1a3a6b; }
 .rw-body { flex:1; min-height:0; display:flex; gap:32px; margin-top:14px; }
 /* ═══ 无框角色剪影（预注册奖励页 / 角色介绍页共用；正式站替换为立绘图片）═══ */
 .sil { position:relative; display:flex; flex-direction:column; align-items:center; justify-content:flex-end; }
@@ -113,9 +105,25 @@ html { scroll-snap-type: y mandatory; scroll-behavior: smooth; scroll-padding-to
 .rw-note { flex:none; font-size:16px; font-weight:600; color:#1a3a6b; margin-bottom:10px; }
 /* 第一行第 1、2 档；第二行第 3、4 档；第三行单列第 5 档大奖 */
 .rw-grid { flex:1; min-height:0; display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); grid-auto-rows:1fr; gap:12px; }
-.rw-tier { background:#fff; border:1px solid #c8cdd6; border-radius:10px; padding:12px 16px; display:flex; flex-direction:column; justify-content:center; gap:10px; }
+.rw-tier { position:relative; background:#fff; border:1px solid #c8cdd6; border-radius:10px; padding:12px 16px; display:flex; flex-direction:column; justify-content:center; gap:10px; }
+/* 达成章：已达成档位盖印；未达成档位不显示章 */
+/* 已达成档位右侧留出印章区，保证章压在卡内且不遮住奖励内容 */
+.rw-tier.done { border-color:#c0392b; padding-right:112px; }
+.rw-stamp {
+  position:absolute; right:14px; top:50%; z-index:3;
+  width:92px; height:92px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  transform:translateY(-50%) rotate(-12deg);
+  border:4px double #c0392b;
+  background:rgba(255,255,255,.9);
+  color:#c0392b; font-size:23px; font-weight:800; letter-spacing:.08em;
+  box-shadow:0 1px 5px rgba(192,57,43,.22);
+}
+/* 章内圈，做出盖章的双环质感 */
+.rw-stamp::after { content:''; position:absolute; inset:6px; border-radius:50%; border:1.5px solid #c0392b; opacity:.55; }
 .rw-tier.rw-grand { grid-column:1 / -1; background:#fdf3d8; border-color:#e6cf8a; }
-.rw-tier-head { display:flex; align-items:center; justify-content:space-between; gap:12px; }
+/* 档位号与人数相邻靠左，把卡片右侧让给达成章 */
+.rw-tier-head { display:flex; align-items:center; justify-content:flex-start; gap:14px; }
 .rw-tier-no { font-size:15px; font-weight:700; color:#1a3a6b; }
 .rw-tier.rw-grand .rw-tier-no { font-size:17px; }
 .rw-tier-people { font-size:13px; color:#666; }
@@ -295,42 +303,15 @@ html { scroll-snap-type: y mandatory; scroll-behavior: smooth; scroll-padding-to
       </div>
       <div class="hr-group">
         <h2 class="hr-title">【达成奖励标题文案】</h2>
-        <div class="hr-milestones">
-          <div class="hr-ms">
+        <div class="hr-ms-box">
+          <div class="hr-ms-icons">
             <div class="slot ms-icon"><div class="slot-name">图标</div></div>
-            <div class="ms-info">
-              <div class="ms-num">【人数】</div>
-              <div class="ms-reward">【奖励内容】</div>
-            </div>
-          </div>
-          <div class="hr-ms">
             <div class="slot ms-icon"><div class="slot-name">图标</div></div>
-            <div class="ms-info">
-              <div class="ms-num">【人数】</div>
-              <div class="ms-reward">【奖励内容】</div>
-            </div>
-          </div>
-          <div class="hr-ms">
             <div class="slot ms-icon"><div class="slot-name">图标</div></div>
-            <div class="ms-info">
-              <div class="ms-num">【人数】</div>
-              <div class="ms-reward">【奖励内容】</div>
-            </div>
-          </div>
-          <div class="hr-ms">
             <div class="slot ms-icon"><div class="slot-name">图标</div></div>
-            <div class="ms-info">
-              <div class="ms-num">【人数】</div>
-              <div class="ms-reward">【奖励内容】</div>
-            </div>
-          </div>
-          <div class="hr-ms last">
             <div class="slot ms-icon"><div class="slot-name">图标</div></div>
-            <div class="ms-info">
-              <div class="ms-num">【人数】</div>
-              <div class="ms-reward">【奖励内容】</div>
-            </div>
           </div>
+          <div class="hr-ms-text">【总奖励文案】</div>
         </div>
       </div>
     </div>
@@ -339,11 +320,7 @@ html { scroll-snap-type: y mandatory; scroll-behavior: smooth; scroll-padding-to
   <!-- 预注册奖励：左三选一赠送角色（自动轮播）/ 右五档阶段奖励 + 预约按钮 -->
   <section class="block block-rewards" id="rewards">
     <div class="inner">
-      <div class="rw-head">
-        <h2 class="section-title">预注册奖励</h2>
-        <!-- 当前人数：小幅展示，展示值由运营手动维护 -->
-        <div class="rw-count">事前注册人数：<span class="rw-count-num">【人数】</span> 人</div>
-      </div>
+      <h2 class="section-title">预注册奖励</h2>
       <div class="rw-body">
         <!-- 左：三选一赠送角色。立绘直接置于页面背景（无框），美术字叠压在立绘下部 -->
         <div class="rw-left">
@@ -364,7 +341,8 @@ html { scroll-snap-type: y mandatory; scroll-behavior: smooth; scroll-padding-to
         <div class="rw-right">
           <div class="rw-note">【奖励说明文案】</div>
           <div class="rw-grid">
-            <div class="rw-tier">
+            <div class="rw-tier done">
+              <div class="rw-stamp">達成</div>
               <div class="rw-tier-head"><span class="rw-tier-no">第1档</span><span class="rw-tier-people">【人数】</span></div>
               <div class="rw-tier-body">
                 <div class="slot rw-tier-icon"><div class="slot-name">图标</div></div>
@@ -374,7 +352,8 @@ html { scroll-snap-type: y mandatory; scroll-behavior: smooth; scroll-padding-to
                 </div>
               </div>
             </div>
-            <div class="rw-tier">
+            <div class="rw-tier done">
+              <div class="rw-stamp">達成</div>
               <div class="rw-tier-head"><span class="rw-tier-no">第2档</span><span class="rw-tier-people">【人数】</span></div>
               <div class="rw-tier-body">
                 <div class="slot rw-tier-icon"><div class="slot-name">图标</div></div>
@@ -384,7 +363,8 @@ html { scroll-snap-type: y mandatory; scroll-behavior: smooth; scroll-padding-to
                 </div>
               </div>
             </div>
-            <div class="rw-tier">
+            <div class="rw-tier done">
+              <div class="rw-stamp">達成</div>
               <div class="rw-tier-head"><span class="rw-tier-no">第3档</span><span class="rw-tier-people">【人数】</span></div>
               <div class="rw-tier-body">
                 <div class="slot rw-tier-icon"><div class="slot-name">图标</div></div>
@@ -440,7 +420,7 @@ html { scroll-snap-type: y mandatory; scroll-behavior: smooth; scroll-padding-to
       <h2 class="section-title">角色介绍</h2>
       <div class="char-content">
         <div class="char-left">
-          <div class="char-name" id="charName">角色1</div>
+          <div class="char-name" id="charName">角色名称1</div>
           <div class="char-desc" id="charDesc">【角色1 · 性格介绍文案】</div>
           <!-- 头像一排六个，按本页名单顺序排布，点选切换 -->
           <div class="char-avatars" id="charAvatars"></div>
@@ -559,12 +539,12 @@ document.querySelectorAll('.prereg-block, .rw-prereg').forEach(function(f){
 /* ═══ 角色介绍 · 六名角色切换 ═══ */
 (function() {
   var CHARS = [
-    { name: '角色1', desc: '【角色1 · 性格介绍文案】' },
-    { name: '角色2', desc: '【角色2 · 性格介绍文案】' },
-    { name: '角色3', desc: '【角色3 · 性格介绍文案】' },
-    { name: '角色4', desc: '【角色4 · 性格介绍文案】' },
-    { name: '角色5', desc: '【角色5 · 性格介绍文案】' },
-    { name: '角色6', desc: '【角色6 · 性格介绍文案】' }
+    { name: '角色1', displayName: '角色名称1', desc: '【角色1 · 性格介绍文案】' },
+    { name: '角色2', displayName: '角色名称2', desc: '【角色2 · 性格介绍文案】' },
+    { name: '角色3', displayName: '角色名称3', desc: '【角色3 · 性格介绍文案】' },
+    { name: '角色4', displayName: '角色名称4', desc: '【角色4 · 性格介绍文案】' },
+    { name: '角色5', displayName: '角色名称5', desc: '【角色5 · 性格介绍文案】' },
+    { name: '角色6', displayName: '角色名称6', desc: '【角色6 · 性格介绍文案】' }
   ];
   var curIdx = 0;
 
@@ -579,7 +559,8 @@ document.querySelectorAll('.prereg-block, .rw-prereg').forEach(function(f){
   }
   function applyChar(idx) {
     curIdx = idx;
-    document.getElementById('charName').textContent = CHARS[idx].name;
+    /* 左上角名字位显示「角色名称N」，其余位置仍用「角色N」 */
+    document.getElementById('charName').textContent = CHARS[idx].displayName;
     document.getElementById('charDesc').textContent = CHARS[idx].desc;
     document.getElementById('charArtTag').textContent = CHARS[idx].name + ' 立绘';
     document.getElementById('charChibiName').textContent = CHARS[idx].name + ' 猫咪化小Q';
