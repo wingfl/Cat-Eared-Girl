@@ -138,6 +138,51 @@ html { scroll-snap-type: y mandatory; scroll-behavior: smooth; scroll-padding-to
 .rw-prereg .rw-btn { width:100%; padding:16px 0; font-size:20px; border-radius:8px; }
 .rw-op { display:flex; align-items:center; flex-wrap:wrap; gap:8px 24px; margin-top:2px; }
 
+/* ═══ 新闻：左静态装饰角色 / 右分类页签 + 新闻列表 + 分页 ═══ */
+.block-news > .inner { max-width:none; height:100%; display:flex; flex-direction:column; padding:24px 40px; }
+.news-body { flex:1; min-height:0; display:flex; gap:40px; margin-top:14px; }
+/* 左栏：静态装饰角色，无框置于页面背景，不随分类切换 */
+.news-left { flex:0 0 36%; min-width:0; display:flex; flex-direction:column; align-items:center; justify-content:center; }
+.news-art { flex:0 0 62%; min-height:0; width:100%; }
+.news-art .sil-head { width:48%; height:32%; }
+.news-art .sil-body { width:42%; }
+.news-art-label { flex:none; margin-top:10px; text-align:center; font-size:13px; color:#8a6a74; }
+/* 右栏：页签固定在上、分页固定在下，中间列表区吸收高度差，切分类/空状态都不跳动 */
+.news-right { flex:1; min-width:0; display:flex; flex-direction:column; padding-top:24px; }
+.news-tabs { flex:none; display:flex; justify-content:center; gap:20px; }
+.news-tab {
+  flex:none; min-width:180px; padding:12px 24px;
+  font-size:17px; font-weight:600; color:#1a3a6b; font-family:inherit;
+  background:#fff; border:1px solid #c5d9ef; border-radius:8px; cursor:pointer;
+  transition:background .2s ease, border-color .2s ease;
+}
+.news-tab.cur { background:#f9dce5; border-color:#c98a9e; }
+/* 列表：固定 5 行高度（5×60 + 4×12 = 348），最后一页只剩几条时高度不塌，分页不跳动 */
+.news-list { flex:none; display:flex; flex-direction:column; justify-content:flex-start; gap:12px; margin-top:16px; min-height:348px; }
+/* 空状态：列表区不撑高，只留一段合理间距 */
+.news-list.is-empty { flex:none; }
+.news-item { display:flex; align-items:center; gap:20px; height:60px; box-sizing:border-box; padding:0 22px; background:#fff; border:1px solid #c5d9ef; border-radius:8px; cursor:pointer; transition:background .15s ease, border-color .15s ease, box-shadow .15s ease; }
+.news-item:nth-child(odd) { background:#e8f2fa; }
+/* 悬浮态：整行转淡粉底 + 粉边 + 轻微投影，与页签选中色呼应 */
+.news-item:hover { background:#fdf2f5; border-color:#c98a9e; box-shadow:0 2px 8px rgba(201,138,158,.18); }
+/* 分类标签：与当前页签对应的分类名 */
+.news-item-cat { flex:none; min-width:64px; padding:4px 12px; text-align:center; font-size:13px; font-weight:600; color:#1a3a6b; background:#eef4fb; border:1px solid #c5d9ef; border-radius:4px; }
+.news-item-title { flex:1; min-width:0; font-size:16px; color:#1a1a1a; }
+.news-item-date { flex:none; font-size:14px; color:#666; }
+/* 空状态：纯文字，在 5 行区域内水平垂直居中，不加底板 */
+.news-empty { flex:1 1 auto; display:flex; align-items:center; justify-content:center; font-size:18px; color:#333; }
+/* 分页：整条框内 ‹ 页码 ›，当前页粉底 */
+.news-pager { flex:none; align-self:center; margin-top:24px; display:flex; align-items:center; gap:2px; padding:6px 14px; background:#fff; border:1px solid #c5d9ef; border-radius:8px; }
+.news-pager button {
+  min-width:34px; height:34px; border:none; border-radius:6px; background:transparent;
+  font-size:15px; color:#1a3a6b; font-family:inherit; cursor:pointer;
+  transition:background .15s ease, color .15s ease;
+}
+/* 悬浮态：粉底 + 深粉字；置灰箭头与当前页不响应 */
+.news-pager button:not(:disabled):hover { background:#f9dce5; color:#8a3f56; }
+.news-pager button.cur { background:#f9dce5; font-weight:700; }
+.news-pager button:disabled { color:#c8cdd6; cursor:default; }
+
 /* ═══ 角色介绍：左角色名 + 性格介绍 + 头像排布 / 右大立绘 + 猫咪化小Q ═══ */
 .block-char > .inner { max-width:none; height:100%; display:flex; flex-direction:column; padding:24px 40px; }
 .char-content { display:flex; flex:1; min-height:0; gap:40px; width:100%; margin-top:20px; }
@@ -208,6 +253,7 @@ html { scroll-snap-type: y mandatory; scroll-behavior: smooth; scroll-padding-to
     <div class="side-title">DEMO 预览导航</div>
     <div class="side-group-title">官网单页区块</div>
     <a class="side-link" href="#home">首页</a>
+    <a class="side-link" href="#news">新闻</a>
     <a class="side-link" href="#rewards">预注册奖励</a>
     <a class="side-link" href="#char">角色介绍</a>
     <a class="side-link" href="#system">System</a>
@@ -233,6 +279,7 @@ html { scroll-snap-type: y mandatory; scroll-behavior: smooth; scroll-padding-to
   <div class="nav-row">
     <div class="nav-logo"><div class="slot" style="width:auto;min-width:90px;padding:6px 12px;border-radius:6px;white-space:nowrap;"><span class="slot-name" style="font-size:14px;white-space:nowrap;">游戏LOGO</span></div></div>
     <a class="nav-item active" href="#home">首页</a>
+    <a class="nav-item" href="#news">新闻</a>
     <a class="nav-item" href="#rewards">预注册奖励</a>
     <a class="nav-item" href="#char">角色介绍</a>
     <a class="nav-item" href="#system">System</a>
@@ -312,6 +359,32 @@ html { scroll-snap-type: y mandatory; scroll-behavior: smooth; scroll-padding-to
             <div class="slot ms-icon"><div class="slot-name">图标</div></div>
           </div>
           <div class="hr-ms-text">【总奖励文案】</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 新闻：左静态装饰角色 / 右分类页签 + 新闻列表（标题 + 发布时间）+ 分页 -->
+  <section class="block block-news" id="news">
+    <div class="inner">
+      <h2 class="section-title">新闻</h2>
+      <div class="news-body">
+        <!-- 左：静态装饰角色，不随分类与分页变化 -->
+        <div class="news-left">
+          <div class="news-art sil" id="newsArt">
+            <div class="sil-head">
+              <span class="sil-ear l"></span>
+              <span class="sil-ear r"></span>
+            </div>
+            <div class="sil-body"></div>
+          </div>
+          <div class="news-art-label">静态装饰角色</div>
+        </div>
+        <!-- 右：分类页签 → 新闻列表 → 分页 -->
+        <div class="news-right">
+          <div class="news-tabs" id="newsTabs"></div>
+          <div class="news-list" id="newsList"></div>
+          <div class="news-pager" id="newsPager"></div>
         </div>
       </div>
     </div>
@@ -634,6 +707,91 @@ document.querySelectorAll('.prereg-block, .rw-prereg').forEach(function(f){
 
   apply(0);
   start();
+})();
+
+/* ═══ 新闻 · 分类切换 + 分页（每页 5 条，标题与发布时间由后台配置） ═══ */
+(function() {
+  var PAGE_SIZE = 5;
+  /* 两个分类各自的后台新闻条数，正式站由后台接口按分类返回 */
+  var CATS = [
+    { label: '公告', count: 13, empty: '暂无公告' },
+    { label: '活动', count: 0, empty: '暂无活动信息' }
+  ];
+  var tabBox = document.getElementById('newsTabs');
+  var listBox = document.getElementById('newsList');
+  var pagerBox = document.getElementById('newsPager');
+  if (!tabBox || !listBox || !pagerBox) return;
+
+  var curCat = 0, curPage = 0;
+
+  function totalPages() { return Math.max(1, Math.ceil(CATS[curCat].count / PAGE_SIZE)); }
+
+  function renderTabs() {
+    var h = '';
+    for (var i = 0; i < CATS.length; i++) {
+      h += '<button class="news-tab' + (i === curCat ? ' cur' : '') + '" data-cat="' + i + '">' + CATS[i].label + '</button>';
+    }
+    tabBox.innerHTML = h;
+  }
+  function renderList() {
+    if (CATS[curCat].count === 0) {
+      listBox.classList.add('is-empty');
+      listBox.innerHTML = '<div class="news-empty">' + CATS[curCat].empty + '</div>';
+      return;
+    }
+    listBox.classList.remove('is-empty');
+    var total = totalPages();
+    if (curPage > total - 1) curPage = total - 1;
+    var start = curPage * PAGE_SIZE;
+    var end = Math.min(start + PAGE_SIZE, CATS[curCat].count);
+    var h = '';
+    for (var i = start; i < end; i++) {
+      h += '<div class="news-item">' +
+             '<span class="news-item-cat">' + CATS[curCat].label + '</span>' +
+             '<span class="news-item-title">标题内容（后台配置）</span>' +
+             '<span class="news-item-date">【发布时间】</span>' +
+           '</div>';
+    }
+    listBox.innerHTML = h;
+  }
+  function renderPager() {
+    /* 无内容时整条分页（含外框）一起隐藏 */
+    var isEmpty = CATS[curCat].count === 0;
+    pagerBox.hidden = isEmpty;
+    if (isEmpty) { pagerBox.innerHTML = ''; return; }
+    var total = totalPages();
+    var h = '<button data-page="prev"' + (curPage === 0 ? ' disabled' : '') + ' aria-label="上一页">‹</button>';
+    for (var i = 0; i < total; i++) {
+      h += '<button data-page="' + i + '"' + (i === curPage ? ' class="cur"' : '') + '>' + (i + 1) + '</button>';
+    }
+    h += '<button data-page="next"' + (curPage === total - 1 ? ' disabled' : '') + ' aria-label="下一页">›</button>';
+    pagerBox.innerHTML = h;
+  }
+  function render() { renderTabs(); renderList(); renderPager(); }
+
+  /* 切换分类：重新从第 1 页开始 */
+  tabBox.addEventListener('click', function(e) {
+    var t = e.target.closest('.news-tab');
+    if (!t) return;
+    var i = parseInt(t.getAttribute('data-cat'), 10);
+    if (i === curCat) return;
+    curCat = i;
+    curPage = 0;
+    render();
+  });
+  /* 翻页：上一页 / 下一页 / 跳指定页 */
+  pagerBox.addEventListener('click', function(e) {
+    var b = e.target.closest('button[data-page]');
+    if (!b || b.disabled) return;
+    var v = b.getAttribute('data-page');
+    if (v === 'prev') { if (curPage > 0) curPage--; }
+    else if (v === 'next') { if (curPage < totalPages() - 1) curPage++; }
+    else { curPage = parseInt(v, 10); }
+    renderList();
+    renderPager();
+  });
+
+  render();
 })();
 
 /* ═══ System · 大画报无缝轮播 + 分页点 ═══ */
